@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#ffffff">
+<title>Tap Counter</title>
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  html, body {
+    height: 100%;
+    overflow: hidden;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: #ffffff;
+    color: #111111;
+    touch-action: manipulation;
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    cursor: pointer;
+  }
+
+  header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 18px;
+    z-index: 10;
+    pointer-events: none;
+    background: #ffffff;
+  }
+
+  .controls {
+    display: flex;
+    gap: 8px;
+    pointer-events: auto;
+  }
+
+  .btn {
+    font: inherit;
+    font-size: 0.85rem;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    color: #111111;
+    background: #ffffff;
+    border: 1px solid #d4d4d4;
+    border-radius: 6px;
+    padding: 6px 12px;
+    cursor: pointer;
+    transition: background 0.1s ease, border-color 0.1s ease;
+  }
+
+  .btn:hover {
+    background: #f5f5f5;
+    border-color: #b8b8b8;
+  }
+
+  .btn:active {
+    background: #ebebeb;
+  }
+
+  .btn[disabled] {
+    color: #b0b0b0;
+    border-color: #e5e5e5;
+    cursor: default;
+    background: #ffffff;
+  }
+
+  #timer {
+    font-family: ui-monospace, "SF Mono", "Roboto Mono", Menlo, Consolas, monospace;
+    font-size: 1rem;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+    color: #111111;
+    letter-spacing: 0.02em;
+  }
+
+  #stage {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    z-index: 1;
+    background: #ffffff;
+  }
+
+  #count {
+    font-size: clamp(5rem, 30vw, 15rem);
+    font-weight: 700;
+    line-height: 0.9;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.04em;
+    color: #111111;
+    will-change: transform;
+  }
+
+  #hint {
+    font-size: 0.8rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #999999;
+    transition: opacity 0.3s ease;
+  }
+
+  #hint.hidden {
+    opacity: 0;
+  }
+
+  #ripples {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: 5;
+  }
+
+  .ripple {
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    margin: -9px 0 0 -9px;
+    border-radius: 50%;
+    border: 1.5px solid #111111;
+    opacity: 0.6;
+    animation: ripple 0.5s ease-out forwards;
+  }
+
+  @keyframes ripple {
+    from { transform: scale(0.3); opacity: 0.6; }
+    to   { transform: scale(6);   opacity: 0; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ripple { animation-duration: 0.25s; }
+  }
+</style>
+</head>
+<body>
+
+  <header>
+    <div class="controls">
+      <button id="reset" class="btn" type="button">Reset</button>
+      <button id="pause" class="btn" type="button">Pause</button>
+    </div>
+    <div id="timer">00:00.00</div>
+  </header>
+
+  <main id="stage">
+    <div id="count">0</div>
+    <div id="hint">Tap anywhere to start</div>
+  </main>
+
+  <div id="ripples"></div>
+
+<script>
+(function () {
+  "use strict";
+
+  const countEl  = document.getElementById("count");
+  const timerEl  = document.getElementById("timer");
+  const hintEl   = document.getElementById("hint");
+  const resetBtn = document.getElementById("reset");
+  const pauseBtn = document.getElementById("pause");
+  const rippleBox = document.getElementById("ripples");
+
+  let count     = 0;
+  let startTime = 0;
+  let elapsed   = 0;
+  let rafId     = null;
+  let started   = false;
+  let paused    = false;
+
+  function formatTime(ms) {
+    if (ms < 0) ms = 0;
+    const cs       = Math.floor(ms / 10) % 100;
+    const totalSec = Math.floor(ms / 1000);
+    const sec      = totalSec % 60;
+    const min      = Math.floor(totalSec / 60);
+    return (
+      String(min).padStart(2, "0") + ":" +
+      String(sec).padStart(2, "0") + "." +
+      String(cs).padStart(2, "0")
+    );
+  }
+
+  function tick() {
+    const now = performance.now();
+    timerEl.textContent = formatTime(elapsed + (now - startTime));
+    rafId = requestAnimationFrame(tick);
+  }
+
+  function startTimer() {
+    startTime = performance.now();
+    if (rafId === null) rafId = requestAnimationFrame(tick);
+  }
+
+  function stopTimer() {
+    if (rafId !== null) {
+      cancelAnimationFrame(rafId);
+      rafId = null;
+    }
+  }
+
+  function spawnRipple(x, y) {
+    const r = document.createElement("span");
+    r.className = "ripple";
+    r.style.left = x + "px";
+    r.style.top  = y + "px";
+    rippleBox.appendChild(r);
+    setTimeout(() => r.remove(), 600);
+  }
+
+  function popCount() {
+    if (typeof countEl.animate !== "function") return;
+    countEl.animate(
+      [
+        { transform: "scale(1)" },
+        { transform: "scale(1.1)" },
+        { transform: "scale(1)" }
+      ],
+      { duration: 150, easing: "ease-out" }
+    );
+  }
+
+  function updatePauseButton() {
+    pauseBtn.textContent = paused ? "Resume" : "Pause";
+    pauseBtn.disabled = !started;
+  }
+
+  function onPointerDown(e) {
+    if (e.target.closest(".controls")) return;
+    if (e.pointerType === "mouse" && e.button !== 0) return;
+    if (paused) return;
+
+    if (!started) {
+      started = true;
+      elapsed = 0;
+      hintEl.classList.add("hidden");
+      startTimer();
+      updatePauseButton();
+    }
+
+    count++;
+    countEl.textContent = count;
+    popCount();
+    spawnRipple(e.clientX, e.clientY);
+  }
+
+  function reset() {
+    stopTimer();
+    started = false;
+    paused  = false;
+    count   = 0;
+    elapsed = 0;
+
+    countEl.textContent = "0";
+    timerEl.textContent = "00:00.00";
+    hintEl.classList.remove("hidden");
+    rippleBox.replaceChildren();
+    updatePauseButton();
+  }
+
+  function togglePause() {
+    if (!started) return;
+
+    if (paused) {
+      paused = false;
+      startTimer();
+    } else {
+      const now = performance.now();
+      elapsed += now - startTime;
+      timerEl.textContent = formatTime(elapsed);
+      stopTimer();
+      paused = true;
+    }
+    updatePauseButton();
+  }
+
+  window.addEventListener("pointerdown", onPointerDown, { passive: true });
+  resetBtn.addEventListener("click", function (e) {
+    e.stopPropagation();
+    reset();
+  });
+  pauseBtn.addEventListener("click", function (e) {
+    e.stopPropagation();
+    togglePause();
+  });
+
+  window.addEventListener("contextmenu", function (e) {
+    if (!e.target.closest(".controls")) e.preventDefault();
+  });
+
+  document.addEventListener("visibilitychange", function () {
+    if (document.hidden && started && !paused) {
+      const now = performance.now();
+      elapsed += now - startTime;
+      timerEl.textContent = formatTime(elapsed);
+      stopTimer();
+    } else if (!document.hidden && started && !paused && rafId === null) {
+      startTimer();
+    }
+  });
+
+  updatePauseButton();
+})();
+</script>
+</body>
+</html>
