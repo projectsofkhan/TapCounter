@@ -1,157 +1,323 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Zeeshan Khan — Private Space</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --bg: #0b0d11;
-      --card-bg: rgba(15, 23, 42, 0.7);
-      --border: rgba(255, 255, 255, 0.08);
-      --text: #f8fafc;
-      --text-muted: #94a3b8;
-      --error: #f43f5e;
-    }
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
-    body {
-      background: radial-gradient(circle at 50% 30%, #1e293b 0%, #0b0d11 75%);
-      color: var(--text);
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 1.5rem;
-    }
-    .gate-container {
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      backdrop-filter: blur(20px);
-      border-radius: 1.5rem;
-      padding: 2.5rem;
-      max-width: 480px;
-      width: 100%;
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
-    }
-    .gate-header { text-align: center; margin-bottom: 2rem; }
-    .gate-header h1 { font-size: 1.75rem; font-weight: 600; letter-spacing: -0.02em; }
-    .gate-header p { color: var(--text-muted); font-size: 0.9rem; margin-top: 0.5rem; }
-    .form-group { margin-bottom: 1.25rem; }
-    label {
-      display: block; font-size: 0.75rem; font-weight: 600;
-      color: var(--text-muted); margin-bottom: 0.4rem;
-      text-transform: uppercase; letter-spacing: 0.05em;
-    }
-    input {
-      width: 100%; background: rgba(255, 255, 255, 0.04);
-      border: 1px solid var(--border); border-radius: 0.75rem;
-      padding: 0.75rem 1rem; color: var(--text); font-size: 0.95rem; outline: none;
-      transition: all 0.2s ease;
-    }
-    input:focus { border-color: rgba(255, 255, 255, 0.3); background: rgba(255, 255, 255, 0.08); }
-    .passwords-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
-    .submit-btn {
-      width: 100%; margin-top: 1.5rem; background: #f8fafc; color: #0b0d11;
-      border: none; padding: 0.85rem; border-radius: 0.75rem;
-      font-weight: 600; font-size: 0.95rem; cursor: pointer; transition: all 0.2s ease;
-    }
-    .submit-btn:hover { background: #e2e8f0; transform: translateY(-1px); }
-    .alert-msg {
-      margin-top: 1rem; padding: 0.75rem; border-radius: 0.5rem; font-size: 0.85rem;
-      text-align: center; display: none; background: rgba(244, 63, 94, 0.15);
-      border: 1px solid rgba(244, 63, 94, 0.3); color: var(--error);
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#ffffff">
+<title>Tap Counter</title>
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  html, body {
+    height: 100%;
+    overflow: hidden;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: #ffffff;
+    color: #111111;
+    touch-action: manipulation;
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    cursor: pointer;
+  }
+
+  header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 18px;
+    z-index: 10;
+    pointer-events: none;
+    background: #ffffff;
+  }
+
+  .controls {
+    display: flex;
+    gap: 8px;
+    pointer-events: auto;
+  }
+
+  .btn {
+    font: inherit;
+    font-size: 0.85rem;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    color: #111111;
+    background: #ffffff;
+    border: 1px solid #d4d4d4;
+    border-radius: 6px;
+    padding: 6px 12px;
+    cursor: pointer;
+    transition: background 0.1s ease, border-color 0.1s ease;
+  }
+
+  .btn:hover {
+    background: #f5f5f5;
+    border-color: #b8b8b8;
+  }
+
+  .btn:active {
+    background: #ebebeb;
+  }
+
+  .btn[disabled] {
+    color: #b0b0b0;
+    border-color: #e5e5e5;
+    cursor: default;
+    background: #ffffff;
+  }
+
+  #timer {
+    font-family: ui-monospace, "SF Mono", "Roboto Mono", Menlo, Consolas, monospace;
+    font-size: 1rem;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+    color: #111111;
+    letter-spacing: 0.02em;
+  }
+
+  #stage {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    z-index: 1;
+    background: #ffffff;
+  }
+
+  #count {
+    font-size: clamp(5rem, 30vw, 15rem);
+    font-weight: 700;
+    line-height: 0.9;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.04em;
+    color: #111111;
+    will-change: transform;
+  }
+
+  #hint {
+    font-size: 0.8rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #999999;
+    transition: opacity 0.3s ease;
+  }
+
+  #hint.hidden {
+    opacity: 0;
+  }
+
+  #ripples {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: 5;
+  }
+
+  .ripple {
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    margin: -9px 0 0 -9px;
+    border-radius: 50%;
+    border: 1.5px solid #111111;
+    opacity: 0.6;
+    animation: ripple 0.5s ease-out forwards;
+  }
+
+  @keyframes ripple {
+    from { transform: scale(0.3); opacity: 0.6; }
+    to   { transform: scale(6);   opacity: 0; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ripple { animation-duration: 0.25s; }
+  }
+</style>
 </head>
 <body>
-  <div class="gate-container">
-    <div class="gate-header">
-      <h1>Private Space</h1>
-      <p>Verification required to access Zeeshan Khan's space.</p>
+
+  <header>
+    <div class="controls">
+      <button id="reset" class="btn" type="button">Reset</button>
+      <button id="pause" class="btn" type="button">Pause</button>
     </div>
+    <div id="timer">00:00.00</div>
+  </header>
 
-    <form id="gate-form">
-      <div class="form-group">
-        <label>Full Name</label>
-        <input type="text" id="input-name" placeholder="Full Name" required />
-      </div>
+  <main id="stage">
+    <div id="count">0</div>
+    <div id="hint">Tap anywhere to start</div>
+  </main>
 
-      <div class="form-group">
-        <label>Username</label>
-        <input type="text" id="input-username" placeholder="Username" required />
-      </div>
+  <div id="ripples"></div>
 
-      <div class="form-group">
-        <label>Passkeys (Any order)</label>
-        <div class="passwords-grid">
-          <input type="password" id="pass-1" placeholder="Passkey 1" required />
-          <input type="password" id="pass-2" placeholder="Passkey 2" required />
-          <input type="password" id="pass-3" placeholder="Passkey 3" required />
-          <input type="password" id="pass-4" placeholder="Passkey 4" required />
-        </div>
-      </div>
+<script>
+(function () {
+  "use strict";
 
-      <button type="submit" class="submit-btn">Unlock Space</button>
-      <div id="gate-alert" class="alert-msg"></div>
-    </form>
-  </div>
+  const countEl  = document.getElementById("count");
+  const timerEl  = document.getElementById("timer");
+  const hintEl   = document.getElementById("hint");
+  const resetBtn = document.getElementById("reset");
+  const pauseBtn = document.getElementById("pause");
+  const rippleBox = document.getElementById("ripples");
 
-  <script type="module">
-    import { supabase } from './supabase.js';
+  let count     = 0;
+  let startTime = 0;
+  let elapsed   = 0;
+  let rafId     = null;
+  let started   = false;
+  let paused    = false;
 
-    const VALID_NAME = "Zeeshan Khan";
-    const REQUIRED_KEYS = [
-      "king630707",
-      "kingfc0g0g",
-      "King-630707",
-      "2655198114"
-    ].sort();
+  function formatTime(ms) {
+    if (ms < 0) ms = 0;
+    const cs       = Math.floor(ms / 10) % 100;
+    const totalSec = Math.floor(ms / 1000);
+    const sec      = totalSec % 60;
+    const min      = Math.floor(totalSec / 60);
+    return (
+      String(min).padStart(2, "0") + ":" +
+      String(sec).padStart(2, "0") + "." +
+      String(cs).padStart(2, "0")
+    );
+  }
 
-    let attempts = 0;
-    const MAX_ATTEMPTS = 5;
+  function tick() {
+    const now = performance.now();
+    timerEl.textContent = formatTime(elapsed + (now - startTime));
+    rafId = requestAnimationFrame(tick);
+  }
 
-    document.getElementById('gate-form').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const alertBox = document.getElementById('gate-alert');
-      
-      const enteredName = document.getElementById('input-name').value.trim();
-      const enteredUsername = document.getElementById('input-username').value.trim();
-      const enteredKeys = [
-        document.getElementById('pass-1').value.trim(),
-        document.getElementById('pass-2').value.trim(),
-        document.getElementById('pass-3').value.trim(),
-        document.getElementById('pass-4').value.trim()
-      ].sort();
+  function startTimer() {
+    startTime = performance.now();
+    if (rafId === null) rafId = requestAnimationFrame(tick);
+  }
 
-      const nameMatches = (enteredName === VALID_NAME);
-      const usernameValid = enteredUsername.length > 0;
-      const keysMatch = (
-        enteredKeys.length === REQUIRED_KEYS.length &&
-        enteredKeys.every((key, idx) => key === REQUIRED_KEYS[idx])
-      );
+  function stopTimer() {
+    if (rafId !== null) {
+      cancelAnimationFrame(rafId);
+      rafId = null;
+    }
+  }
 
-      if (nameMatches && usernameValid && keysMatch) {
-        // Mark session unlocked and proceed to Home
-        sessionStorage.setItem('zk_space_unlocked', 'true');
-        sessionStorage.setItem('zk_user', enteredUsername);
-        window.location.href = 'home.html';
-      } else {
-        attempts++;
-        if (attempts >= MAX_ATTEMPTS) {
-          document.querySelector('.gate-container').innerHTML = `
-            <div style="text-align: center; color: var(--error); padding: 2rem 0;">
-              <h3>Access Permanently Locked</h3>
-              <p style="font-size: 0.85rem; color: #94a3b8; margin-top: 0.5rem;">Maximum attempts exceeded.</p>
-            </div>`;
-        } else {
-          alertBox.style.display = 'block';
-          alertBox.innerText = `Invalid credentials. (${MAX_ATTEMPTS - attempts} attempts left)`;
-        }
-      }
-    });
-  </script>
+  function spawnRipple(x, y) {
+    const r = document.createElement("span");
+    r.className = "ripple";
+    r.style.left = x + "px";
+    r.style.top  = y + "px";
+    rippleBox.appendChild(r);
+    setTimeout(() => r.remove(), 600);
+  }
+
+  function popCount() {
+    if (typeof countEl.animate !== "function") return;
+    countEl.animate(
+      [
+        { transform: "scale(1)" },
+        { transform: "scale(1.1)" },
+        { transform: "scale(1)" }
+      ],
+      { duration: 150, easing: "ease-out" }
+    );
+  }
+
+  function updatePauseButton() {
+    pauseBtn.textContent = paused ? "Resume" : "Pause";
+    pauseBtn.disabled = !started;
+  }
+
+  function onPointerDown(e) {
+    if (e.target.closest(".controls")) return;
+    if (e.pointerType === "mouse" && e.button !== 0) return;
+    if (paused) return;
+
+    if (!started) {
+      started = true;
+      elapsed = 0;
+      hintEl.classList.add("hidden");
+      startTimer();
+      updatePauseButton();
+    }
+
+    count++;
+    countEl.textContent = count;
+    popCount();
+    spawnRipple(e.clientX, e.clientY);
+  }
+
+  function reset() {
+    stopTimer();
+    started = false;
+    paused  = false;
+    count   = 0;
+    elapsed = 0;
+
+    countEl.textContent = "0";
+    timerEl.textContent = "00:00.00";
+    hintEl.classList.remove("hidden");
+    rippleBox.replaceChildren();
+    updatePauseButton();
+  }
+
+  function togglePause() {
+    if (!started) return;
+
+    if (paused) {
+      paused = false;
+      startTimer();
+    } else {
+      const now = performance.now();
+      elapsed += now - startTime;
+      timerEl.textContent = formatTime(elapsed);
+      stopTimer();
+      paused = true;
+    }
+    updatePauseButton();
+  }
+
+  window.addEventListener("pointerdown", onPointerDown, { passive: true });
+  resetBtn.addEventListener("click", function (e) {
+    e.stopPropagation();
+    reset();
+  });
+  pauseBtn.addEventListener("click", function (e) {
+    e.stopPropagation();
+    togglePause();
+  });
+
+  window.addEventListener("contextmenu", function (e) {
+    if (!e.target.closest(".controls")) e.preventDefault();
+  });
+
+  document.addEventListener("visibilitychange", function () {
+    if (document.hidden && started && !paused) {
+      const now = performance.now();
+      elapsed += now - startTime;
+      timerEl.textContent = formatTime(elapsed);
+      stopTimer();
+    } else if (!document.hidden && started && !paused && rafId === null) {
+      startTimer();
+    }
+  });
+
+  updatePauseButton();
+})();
+</script>
 </body>
 </html>
