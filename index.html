@@ -3,54 +3,31 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Zeeshan Khan — Personal Space</title>
+  <title>Zeeshan Khan — Private Space</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
       --bg: #0b0d11;
-      --card-bg: rgba(255, 255, 255, 0.03);
+      --card-bg: rgba(15, 23, 42, 0.7);
       --border: rgba(255, 255, 255, 0.08);
-      --accent: #e2e8f0;
       --text: #f8fafc;
       --text-muted: #94a3b8;
       --error: #f43f5e;
-      --success: #10b981;
     }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: 'Plus Jakarta Sans', sans-serif;
-    }
-
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
     body {
-      background-color: var(--bg);
+      background: radial-gradient(circle at 50% 30%, #1e293b 0%, #0b0d11 75%);
       color: var(--text);
       min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      overflow-x: hidden;
-      line-height: 1.6;
-    }
-
-    /* Gate / Lockscreen */
-    #gate-screen {
-      position: fixed;
-      inset: 0;
-      background: radial-gradient(circle at 50% 30%, #1e293b 0%, #0b0d11 75%);
       display: flex;
       align-items: center;
       justify-content: center;
       padding: 1.5rem;
-      z-index: 1000;
-      transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.7s;
     }
-
     .gate-container {
-      background: rgba(15, 23, 42, 0.65);
+      background: var(--card-bg);
       border: 1px solid var(--border);
       backdrop-filter: blur(20px);
       border-radius: 1.5rem;
@@ -59,353 +36,72 @@
       width: 100%;
       box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
     }
-
-    .gate-header {
-      text-align: center;
-      margin-bottom: 2rem;
-    }
-
-    .gate-header h1 {
-      font-size: 1.75rem;
-      font-weight: 600;
-      letter-spacing: -0.02em;
-    }
-
-    .gate-header p {
-      color: var(--text-muted);
-      font-size: 0.9rem;
-      margin-top: 0.5rem;
-    }
-
-    .form-group {
-      margin-bottom: 1.25rem;
-    }
-
+    .gate-header { text-align: center; margin-bottom: 2rem; }
+    .gate-header h1 { font-size: 1.75rem; font-weight: 600; letter-spacing: -0.02em; }
+    .gate-header p { color: var(--text-muted); font-size: 0.9rem; margin-top: 0.5rem; }
+    .form-group { margin-bottom: 1.25rem; }
     label {
-      display: block;
-      font-size: 0.8rem;
-      font-weight: 500;
-      color: var(--text-muted);
-      margin-bottom: 0.4rem;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
+      display: block; font-size: 0.75rem; font-weight: 600;
+      color: var(--text-muted); margin-bottom: 0.4rem;
+      text-transform: uppercase; letter-spacing: 0.05em;
     }
-
     input {
-      width: 100%;
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid var(--border);
-      border-radius: 0.75rem;
-      padding: 0.75rem 1rem;
-      color: var(--text);
-      font-size: 0.95rem;
+      width: 100%; background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border); border-radius: 0.75rem;
+      padding: 0.75rem 1rem; color: var(--text); font-size: 0.95rem; outline: none;
       transition: all 0.2s ease;
-      outline: none;
     }
-
-    input:focus {
-      border-color: rgba(255, 255, 255, 0.3);
-      background: rgba(255, 255, 255, 0.07);
-      box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.05);
-    }
-
-    .passwords-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 0.75rem;
-    }
-
+    input:focus { border-color: rgba(255, 255, 255, 0.3); background: rgba(255, 255, 255, 0.08); }
+    .passwords-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
     .submit-btn {
-      width: 100%;
-      margin-top: 1.5rem;
-      background: #f8fafc;
-      color: #0b0d11;
-      border: none;
-      padding: 0.85rem;
-      border-radius: 0.75rem;
-      font-weight: 600;
-      font-size: 0.95rem;
-      cursor: pointer;
-      transition: all 0.2s ease;
+      width: 100%; margin-top: 1.5rem; background: #f8fafc; color: #0b0d11;
+      border: none; padding: 0.85rem; border-radius: 0.75rem;
+      font-weight: 600; font-size: 0.95rem; cursor: pointer; transition: all 0.2s ease;
     }
-
-    .submit-btn:hover {
-      background: #e2e8f0;
-      transform: translateY(-1px);
-    }
-
+    .submit-btn:hover { background: #e2e8f0; transform: translateY(-1px); }
     .alert-msg {
-      margin-top: 1rem;
-      padding: 0.75rem;
-      border-radius: 0.5rem;
-      font-size: 0.85rem;
-      text-align: center;
-      display: none;
-    }
-
-    .alert-error {
-      background: rgba(244, 63, 94, 0.15);
-      border: 1px solid rgba(244, 63, 94, 0.3);
-      color: var(--error);
-    }
-
-    /* Main App Content */
-    #main-site {
-      display: none;
-      opacity: 0;
-      transition: opacity 0.8s ease;
-    }
-
-    nav {
-      position: sticky;
-      top: 0;
-      background: rgba(11, 13, 17, 0.85);
-      backdrop-filter: blur(16px);
-      border-bottom: 1px solid var(--border);
-      padding: 1.25rem 2rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      z-index: 100;
-    }
-
-    .logo {
-      font-size: 1.15rem;
-      font-weight: 700;
-      letter-spacing: -0.02em;
-    }
-
-    .nav-links {
-      display: flex;
-      gap: 1.5rem;
-      list-style: none;
-    }
-
-    .nav-links a {
-      color: var(--text-muted);
-      text-decoration: none;
-      font-size: 0.9rem;
-      transition: color 0.2s ease;
-      cursor: pointer;
-    }
-
-    .nav-links a:hover,
-    .nav-links a.active {
-      color: var(--text);
-    }
-
-    .content-container {
-      max-width: 900px;
-      margin: 0 auto;
-      padding: 4rem 1.5rem;
-      width: 100%;
-    }
-
-    section {
-      display: none;
-      animation: fadeIn 0.4s ease forwards;
-    }
-
-    section.active {
-      display: block;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(8px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    h2 {
-      font-size: 2.25rem;
-      font-weight: 700;
-      letter-spacing: -0.03em;
-      margin-bottom: 1rem;
-    }
-
-    p.lead {
-      font-size: 1.15rem;
-      color: var(--text-muted);
-      margin-bottom: 2.5rem;
-      max-width: 650px;
-    }
-
-    .card {
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      border-radius: 1rem;
-      padding: 1.75rem;
-      margin-bottom: 1.25rem;
-      transition: border-color 0.2s ease;
-    }
-
-    .card:hover {
-      border-color: rgba(255, 255, 255, 0.16);
-    }
-
-    .timeline {
-      border-left: 2px solid var(--border);
-      padding-left: 1.5rem;
-      margin-left: 0.5rem;
-    }
-
-    .timeline-item {
-      position: relative;
-      margin-bottom: 2rem;
-    }
-
-    .timeline-item::before {
-      content: '';
-      position: absolute;
-      left: calc(-1.5rem - 5px);
-      top: 5px;
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: var(--text);
-    }
-
-    .gallery-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      gap: 1.25rem;
-    }
-
-    .gallery-box {
-      aspect-ratio: 4 / 3;
-      border-radius: 0.75rem;
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--text-muted);
-      font-size: 0.85rem;
-    }
-
-    .lockout-msg {
-      text-align: center;
-      color: var(--error);
-      padding: 3rem 1rem;
+      margin-top: 1rem; padding: 0.75rem; border-radius: 0.5rem; font-size: 0.85rem;
+      text-align: center; display: none; background: rgba(244, 63, 94, 0.15);
+      border: 1px solid rgba(244, 63, 94, 0.3); color: var(--error);
     }
   </style>
 </head>
 <body>
+  <div class="gate-container">
+    <div class="gate-header">
+      <h1>Private Space</h1>
+      <p>Verification required to access Zeeshan Khan's space.</p>
+    </div>
 
-  <!-- Entry Gate -->
-  <div id="gate-screen">
-    <div class="gate-container">
-      <div class="gate-header">
-        <h1>Private Space</h1>
-        <p>Verification required to access Zeeshan Khan's space.</p>
+    <form id="gate-form">
+      <div class="form-group">
+        <label>Full Name</label>
+        <input type="text" id="input-name" placeholder="Full Name" required />
       </div>
 
-      <form id="gate-form" onsubmit="handleVerification(event)">
-        <div class="form-group">
-          <label>Full Name</label>
-          <input type="text" id="input-name" placeholder="Full name" required />
-        </div>
+      <div class="form-group">
+        <label>Username</label>
+        <input type="text" id="input-username" placeholder="Username" required />
+      </div>
 
-        <div class="form-group">
-          <label>Username</label>
-          <input type="text" id="input-username" placeholder="Username" required />
+      <div class="form-group">
+        <label>Passkeys (Any order)</label>
+        <div class="passwords-grid">
+          <input type="password" id="pass-1" placeholder="Passkey 1" required />
+          <input type="password" id="pass-2" placeholder="Passkey 2" required />
+          <input type="password" id="pass-3" placeholder="Passkey 3" required />
+          <input type="password" id="pass-4" placeholder="Passkey 4" required />
         </div>
+      </div>
 
-        <div class="form-group">
-          <label>Passkeys (Any order)</label>
-          <div class="passwords-grid">
-            <input type="password" id="pass-1" placeholder="Passkey 1" required />
-            <input type="password" id="pass-2" placeholder="Passkey 2" required />
-            <input type="password" id="pass-3" placeholder="Passkey 3" required />
-            <input type="password" id="pass-4" placeholder="Passkey 4" required />
-          </div>
-        </div>
-
-        <button type="submit" class="submit-btn">Unlock Space</button>
-        <div id="gate-alert" class="alert-msg alert-error"></div>
-      </form>
-    </div>
+      <button type="submit" class="submit-btn">Unlock Space</button>
+      <div id="gate-alert" class="alert-msg"></div>
+    </form>
   </div>
 
-  <!-- Main Website -->
-  <div id="main-site">
-    <nav>
-      <div class="logo">Zeeshan Khan</div>
-      <ul class="nav-links">
-        <li><a onclick="showTab('home')" id="tab-home" class="active">Home</a></li>
-        <li><a onclick="showTab('about')" id="tab-about">About Me</a></li>
-        <li><a onclick="showTab('life')" id="tab-life">My Life</a></li>
-        <li><a onclick="showTab('gallery')" id="tab-gallery">Gallery</a></li>
-        <li><a onclick="showTab('today')" id="tab-today">Today</a></li>
-      </ul>
-    </nav>
+  <script type="module">
+    import { supabase } from './supabase.js';
 
-    <div class="content-container">
-      <!-- Home Section -->
-      <section id="section-home" class="active">
-        <h2>Welcome to My Space</h2>
-        <p class="lead">A quiet corner on the web for my personal thoughts, journey, and milestones.</p>
-        <div class="card">
-          <h3>Current Overview</h3>
-          <p style="color: var(--text-muted); margin-top: 0.5rem;">
-            This site is built as an intimate personal showcase. Here you'll find selected archives of where I've been, reflections on the present, and visual memories along the way.
-          </p>
-        </div>
-      </section>
-
-      <!-- About Me Section -->
-      <section id="section-about">
-        <h2>About Me</h2>
-        <p class="lead">Passionate thinker, builder, and lifelong learner.</p>
-        <div class="card">
-          <h3>Background & Identity</h3>
-          <p style="color: var(--text-muted); margin-top: 0.5rem;">
-            I believe in building with purpose, staying curious, and crafting a life true to personal values and creativity.
-          </p>
-        </div>
-      </section>
-
-      <!-- My Life Section -->
-      <section id="section-life">
-        <h2>Journey & Milestones</h2>
-        <p class="lead">Chapters of learning, growth, and pivotal moments.</p>
-        <div class="timeline">
-          <div class="timeline-item">
-            <h4>Present Day</h4>
-            <p style="color: var(--text-muted); font-size: 0.9rem;">Navigating new horizons, creating projects, and continuous learning.</p>
-          </div>
-          <div class="timeline-item">
-            <h4>The Foundation Years</h4>
-            <p style="color: var(--text-muted); font-size: 0.9rem;">Developing core disciplines, interests, and creative exploration.</p>
-          </div>
-        </div>
-      </section>
-
-      <!-- Gallery Section -->
-      <section id="section-gallery">
-        <h2>Visual Memories</h2>
-        <p class="lead">Snapshots of places, moments, and details.</p>
-        <div class="gallery-grid">
-          <div class="gallery-box">Snapshot 01</div>
-          <div class="gallery-box">Snapshot 02</div>
-          <div class="gallery-box">Snapshot 03</div>
-          <div class="gallery-box">Snapshot 04</div>
-        </div>
-      </section>
-
-      <!-- Today Section -->
-      <section id="section-today">
-        <h2>Today</h2>
-        <p class="lead">Real-time thoughts, active notes, and everyday reflections.</p>
-        <div class="card">
-          <span style="font-size: 0.8rem; color: var(--text-muted);">Current Focus</span>
-          <p style="margin-top: 0.5rem;">Living deliberately and crafting meaningful personal archives.</p>
-        </div>
-      </section>
-    </div>
-  </div>
-
-  <script>
-    // Required credentials
     const VALID_NAME = "Zeeshan Khan";
     const REQUIRED_KEYS = [
       "king630707",
@@ -417,72 +113,45 @@
     let attempts = 0;
     const MAX_ATTEMPTS = 5;
 
-    function handleVerification(e) {
+    document.getElementById('gate-form').addEventListener('submit', async (e) => {
       e.preventDefault();
-      const alertBox = document.getElementById("gate-alert");
+      const alertBox = document.getElementById('gate-alert');
       
-      const enteredName = document.getElementById("input-name").value.trim();
-      const enteredUsername = document.getElementById("input-username").value.trim();
-
+      const enteredName = document.getElementById('input-name').value.trim();
+      const enteredUsername = document.getElementById('input-username').value.trim();
       const enteredKeys = [
-        document.getElementById("pass-1").value.trim(),
-        document.getElementById("pass-2").value.trim(),
-        document.getElementById("pass-3").value.trim(),
-        document.getElementById("pass-4").value.trim()
+        document.getElementById('pass-1').value.trim(),
+        document.getElementById('pass-2').value.trim(),
+        document.getElementById('pass-3').value.trim(),
+        document.getElementById('pass-4').value.trim()
       ].sort();
 
-      // Check name match
       const nameMatches = (enteredName === VALID_NAME);
-      
-      // Check username is not empty
       const usernameValid = enteredUsername.length > 0;
-
-      // Check keys match regardless of order
       const keysMatch = (
         enteredKeys.length === REQUIRED_KEYS.length &&
-        enteredKeys.every((key, index) => key === REQUIRED_KEYS[index])
+        enteredKeys.every((key, idx) => key === REQUIRED_KEYS[idx])
       );
 
       if (nameMatches && usernameValid && keysMatch) {
-        // Unlock site
-        const gate = document.getElementById("gate-screen");
-        const site = document.getElementById("main-site");
-
-        gate.style.opacity = "0";
-        setTimeout(() => {
-          gate.style.display = "none";
-          site.style.display = "block";
-          setTimeout(() => site.style.opacity = "1", 50);
-        }, 700);
+        // Mark session unlocked and proceed to Home
+        sessionStorage.setItem('zk_space_unlocked', 'true');
+        sessionStorage.setItem('zk_user', enteredUsername);
+        window.location.href = 'home.html';
       } else {
         attempts++;
         if (attempts >= MAX_ATTEMPTS) {
-          document.querySelector(".gate-container").innerHTML = `
-            <div class="lockout-msg">
+          document.querySelector('.gate-container').innerHTML = `
+            <div style="text-align: center; color: var(--error); padding: 2rem 0;">
               <h3>Access Permanently Locked</h3>
-              <p style="font-size: 0.9rem; margin-top: 0.5rem; color: var(--text-muted);">
-                Too many failed attempts. Access to this space has been disabled.
-              </p>
-            </div>
-          `;
+              <p style="font-size: 0.85rem; color: #94a3b8; margin-top: 0.5rem;">Maximum attempts exceeded.</p>
+            </div>`;
         } else {
-          alertBox.style.display = "block";
-          alertBox.innerText = `Incorrect credentials. (${MAX_ATTEMPTS - attempts} attempts remaining)`;
+          alertBox.style.display = 'block';
+          alertBox.innerText = `Invalid credentials. (${MAX_ATTEMPTS - attempts} attempts left)`;
         }
       }
-    }
-
-    function showTab(tabName) {
-      document.querySelectorAll("section").forEach(sec => sec.classList.remove("active"));
-      document.querySelectorAll(".nav-links a").forEach(link => link.classList.remove("active"));
-
-      const activeSec = document.getElementById("section-" + tabName);
-      const activeLink = document.getElementById("tab-" + tabName);
-
-      if (activeSec) activeSec.classList.add("active");
-      if (activeLink) activeLink.classList.add("active");
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    }
+    });
   </script>
 </body>
 </html>
