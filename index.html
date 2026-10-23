@@ -1,323 +1,488 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<meta name="theme-color" content="#ffffff">
-<title>Tap Counter</title>
-<style>
-  * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Zeeshan Khan — Personal Space</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0b0d11;
+      --card-bg: rgba(255, 255, 255, 0.03);
+      --border: rgba(255, 255, 255, 0.08);
+      --accent: #e2e8f0;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --error: #f43f5e;
+      --success: #10b981;
+    }
 
-  html, body {
-    height: 100%;
-    overflow: hidden;
-  }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
 
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    background: #ffffff;
-    color: #111111;
-    touch-action: manipulation;
-    -webkit-user-select: none;
-    user-select: none;
-    -webkit-tap-highlight-color: transparent;
-    cursor: pointer;
-  }
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
 
-  header {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 16px 18px;
-    z-index: 10;
-    pointer-events: none;
-    background: #ffffff;
-  }
+    /* Gate / Lockscreen */
+    #gate-screen {
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(circle at 50% 30%, #1e293b 0%, #0b0d11 75%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      z-index: 1000;
+      transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.7s;
+    }
 
-  .controls {
-    display: flex;
-    gap: 8px;
-    pointer-events: auto;
-  }
+    .gate-container {
+      background: rgba(15, 23, 42, 0.65);
+      border: 1px solid var(--border);
+      backdrop-filter: blur(20px);
+      border-radius: 1.5rem;
+      padding: 2.5rem;
+      max-width: 480px;
+      width: 100%;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+    }
 
-  .btn {
-    font: inherit;
-    font-size: 0.85rem;
-    font-weight: 500;
-    letter-spacing: 0.01em;
-    color: #111111;
-    background: #ffffff;
-    border: 1px solid #d4d4d4;
-    border-radius: 6px;
-    padding: 6px 12px;
-    cursor: pointer;
-    transition: background 0.1s ease, border-color 0.1s ease;
-  }
+    .gate-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
 
-  .btn:hover {
-    background: #f5f5f5;
-    border-color: #b8b8b8;
-  }
+    .gate-header h1 {
+      font-size: 1.75rem;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+    }
 
-  .btn:active {
-    background: #ebebeb;
-  }
+    .gate-header p {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      margin-top: 0.5rem;
+    }
 
-  .btn[disabled] {
-    color: #b0b0b0;
-    border-color: #e5e5e5;
-    cursor: default;
-    background: #ffffff;
-  }
+    .form-group {
+      margin-bottom: 1.25rem;
+    }
 
-  #timer {
-    font-family: ui-monospace, "SF Mono", "Roboto Mono", Menlo, Consolas, monospace;
-    font-size: 1rem;
-    font-weight: 500;
-    font-variant-numeric: tabular-nums;
-    color: #111111;
-    letter-spacing: 0.02em;
-  }
+    label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      margin-bottom: 0.4rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
 
-  #stage {
-    position: fixed;
-    inset: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    z-index: 1;
-    background: #ffffff;
-  }
+    input {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border);
+      border-radius: 0.75rem;
+      padding: 0.75rem 1rem;
+      color: var(--text);
+      font-size: 0.95rem;
+      transition: all 0.2s ease;
+      outline: none;
+    }
 
-  #count {
-    font-size: clamp(5rem, 30vw, 15rem);
-    font-weight: 700;
-    line-height: 0.9;
-    font-variant-numeric: tabular-nums;
-    letter-spacing: -0.04em;
-    color: #111111;
-    will-change: transform;
-  }
+    input:focus {
+      border-color: rgba(255, 255, 255, 0.3);
+      background: rgba(255, 255, 255, 0.07);
+      box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.05);
+    }
 
-  #hint {
-    font-size: 0.8rem;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: #999999;
-    transition: opacity 0.3s ease;
-  }
+    .passwords-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+    }
 
-  #hint.hidden {
-    opacity: 0;
-  }
+    .submit-btn {
+      width: 100%;
+      margin-top: 1.5rem;
+      background: #f8fafc;
+      color: #0b0d11;
+      border: none;
+      padding: 0.85rem;
+      border-radius: 0.75rem;
+      font-weight: 600;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
 
-  #ripples {
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    overflow: hidden;
-    z-index: 5;
-  }
+    .submit-btn:hover {
+      background: #e2e8f0;
+      transform: translateY(-1px);
+    }
 
-  .ripple {
-    position: absolute;
-    width: 18px;
-    height: 18px;
-    margin: -9px 0 0 -9px;
-    border-radius: 50%;
-    border: 1.5px solid #111111;
-    opacity: 0.6;
-    animation: ripple 0.5s ease-out forwards;
-  }
+    .alert-msg {
+      margin-top: 1rem;
+      padding: 0.75rem;
+      border-radius: 0.5rem;
+      font-size: 0.85rem;
+      text-align: center;
+      display: none;
+    }
 
-  @keyframes ripple {
-    from { transform: scale(0.3); opacity: 0.6; }
-    to   { transform: scale(6);   opacity: 0; }
-  }
+    .alert-error {
+      background: rgba(244, 63, 94, 0.15);
+      border: 1px solid rgba(244, 63, 94, 0.3);
+      color: var(--error);
+    }
 
-  @media (prefers-reduced-motion: reduce) {
-    .ripple { animation-duration: 0.25s; }
-  }
-</style>
+    /* Main App Content */
+    #main-site {
+      display: none;
+      opacity: 0;
+      transition: opacity 0.8s ease;
+    }
+
+    nav {
+      position: sticky;
+      top: 0;
+      background: rgba(11, 13, 17, 0.85);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+      padding: 1.25rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 100;
+    }
+
+    .logo {
+      font-size: 1.15rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 1.5rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: color 0.2s ease;
+      cursor: pointer;
+    }
+
+    .nav-links a:hover,
+    .nav-links a.active {
+      color: var(--text);
+    }
+
+    .content-container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 4rem 1.5rem;
+      width: 100%;
+    }
+
+    section {
+      display: none;
+      animation: fadeIn 0.4s ease forwards;
+    }
+
+    section.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    h2 {
+      font-size: 2.25rem;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      margin-bottom: 1rem;
+    }
+
+    p.lead {
+      font-size: 1.15rem;
+      color: var(--text-muted);
+      margin-bottom: 2.5rem;
+      max-width: 650px;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 1rem;
+      padding: 1.75rem;
+      margin-bottom: 1.25rem;
+      transition: border-color 0.2s ease;
+    }
+
+    .card:hover {
+      border-color: rgba(255, 255, 255, 0.16);
+    }
+
+    .timeline {
+      border-left: 2px solid var(--border);
+      padding-left: 1.5rem;
+      margin-left: 0.5rem;
+    }
+
+    .timeline-item {
+      position: relative;
+      margin-bottom: 2rem;
+    }
+
+    .timeline-item::before {
+      content: '';
+      position: absolute;
+      left: calc(-1.5rem - 5px);
+      top: 5px;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--text);
+    }
+
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.25rem;
+    }
+
+    .gallery-box {
+      aspect-ratio: 4 / 3;
+      border-radius: 0.75rem;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+    }
+
+    .lockout-msg {
+      text-align: center;
+      color: var(--error);
+      padding: 3rem 1rem;
+    }
+  </style>
 </head>
 <body>
 
-  <header>
-    <div class="controls">
-      <button id="reset" class="btn" type="button">Reset</button>
-      <button id="pause" class="btn" type="button">Pause</button>
+  <!-- Entry Gate -->
+  <div id="gate-screen">
+    <div class="gate-container">
+      <div class="gate-header">
+        <h1>Private Space</h1>
+        <p>Verification required to access Zeeshan Khan's space.</p>
+      </div>
+
+      <form id="gate-form" onsubmit="handleVerification(event)">
+        <div class="form-group">
+          <label>Full Name</label>
+          <input type="text" id="input-name" placeholder="Full name" required />
+        </div>
+
+        <div class="form-group">
+          <label>Username</label>
+          <input type="text" id="input-username" placeholder="Username" required />
+        </div>
+
+        <div class="form-group">
+          <label>Passkeys (Any order)</label>
+          <div class="passwords-grid">
+            <input type="password" id="pass-1" placeholder="Passkey 1" required />
+            <input type="password" id="pass-2" placeholder="Passkey 2" required />
+            <input type="password" id="pass-3" placeholder="Passkey 3" required />
+            <input type="password" id="pass-4" placeholder="Passkey 4" required />
+          </div>
+        </div>
+
+        <button type="submit" class="submit-btn">Unlock Space</button>
+        <div id="gate-alert" class="alert-msg alert-error"></div>
+      </form>
     </div>
-    <div id="timer">00:00.00</div>
-  </header>
+  </div>
 
-  <main id="stage">
-    <div id="count">0</div>
-    <div id="hint">Tap anywhere to start</div>
-  </main>
+  <!-- Main Website -->
+  <div id="main-site">
+    <nav>
+      <div class="logo">Zeeshan Khan</div>
+      <ul class="nav-links">
+        <li><a onclick="showTab('home')" id="tab-home" class="active">Home</a></li>
+        <li><a onclick="showTab('about')" id="tab-about">About Me</a></li>
+        <li><a onclick="showTab('life')" id="tab-life">My Life</a></li>
+        <li><a onclick="showTab('gallery')" id="tab-gallery">Gallery</a></li>
+        <li><a onclick="showTab('today')" id="tab-today">Today</a></li>
+      </ul>
+    </nav>
 
-  <div id="ripples"></div>
+    <div class="content-container">
+      <!-- Home Section -->
+      <section id="section-home" class="active">
+        <h2>Welcome to My Space</h2>
+        <p class="lead">A quiet corner on the web for my personal thoughts, journey, and milestones.</p>
+        <div class="card">
+          <h3>Current Overview</h3>
+          <p style="color: var(--text-muted); margin-top: 0.5rem;">
+            This site is built as an intimate personal showcase. Here you'll find selected archives of where I've been, reflections on the present, and visual memories along the way.
+          </p>
+        </div>
+      </section>
 
-<script>
-(function () {
-  "use strict";
+      <!-- About Me Section -->
+      <section id="section-about">
+        <h2>About Me</h2>
+        <p class="lead">Passionate thinker, builder, and lifelong learner.</p>
+        <div class="card">
+          <h3>Background & Identity</h3>
+          <p style="color: var(--text-muted); margin-top: 0.5rem;">
+            I believe in building with purpose, staying curious, and crafting a life true to personal values and creativity.
+          </p>
+        </div>
+      </section>
 
-  const countEl  = document.getElementById("count");
-  const timerEl  = document.getElementById("timer");
-  const hintEl   = document.getElementById("hint");
-  const resetBtn = document.getElementById("reset");
-  const pauseBtn = document.getElementById("pause");
-  const rippleBox = document.getElementById("ripples");
+      <!-- My Life Section -->
+      <section id="section-life">
+        <h2>Journey & Milestones</h2>
+        <p class="lead">Chapters of learning, growth, and pivotal moments.</p>
+        <div class="timeline">
+          <div class="timeline-item">
+            <h4>Present Day</h4>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">Navigating new horizons, creating projects, and continuous learning.</p>
+          </div>
+          <div class="timeline-item">
+            <h4>The Foundation Years</h4>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">Developing core disciplines, interests, and creative exploration.</p>
+          </div>
+        </div>
+      </section>
 
-  let count     = 0;
-  let startTime = 0;
-  let elapsed   = 0;
-  let rafId     = null;
-  let started   = false;
-  let paused    = false;
+      <!-- Gallery Section -->
+      <section id="section-gallery">
+        <h2>Visual Memories</h2>
+        <p class="lead">Snapshots of places, moments, and details.</p>
+        <div class="gallery-grid">
+          <div class="gallery-box">Snapshot 01</div>
+          <div class="gallery-box">Snapshot 02</div>
+          <div class="gallery-box">Snapshot 03</div>
+          <div class="gallery-box">Snapshot 04</div>
+        </div>
+      </section>
 
-  function formatTime(ms) {
-    if (ms < 0) ms = 0;
-    const cs       = Math.floor(ms / 10) % 100;
-    const totalSec = Math.floor(ms / 1000);
-    const sec      = totalSec % 60;
-    const min      = Math.floor(totalSec / 60);
-    return (
-      String(min).padStart(2, "0") + ":" +
-      String(sec).padStart(2, "0") + "." +
-      String(cs).padStart(2, "0")
-    );
-  }
+      <!-- Today Section -->
+      <section id="section-today">
+        <h2>Today</h2>
+        <p class="lead">Real-time thoughts, active notes, and everyday reflections.</p>
+        <div class="card">
+          <span style="font-size: 0.8rem; color: var(--text-muted);">Current Focus</span>
+          <p style="margin-top: 0.5rem;">Living deliberately and crafting meaningful personal archives.</p>
+        </div>
+      </section>
+    </div>
+  </div>
 
-  function tick() {
-    const now = performance.now();
-    timerEl.textContent = formatTime(elapsed + (now - startTime));
-    rafId = requestAnimationFrame(tick);
-  }
+  <script>
+    // Required credentials
+    const VALID_NAME = "Zeeshan Khan";
+    const REQUIRED_KEYS = [
+      "king630707",
+      "kingfc0g0g",
+      "King-630707",
+      "2655198114"
+    ].sort();
 
-  function startTimer() {
-    startTime = performance.now();
-    if (rafId === null) rafId = requestAnimationFrame(tick);
-  }
+    let attempts = 0;
+    const MAX_ATTEMPTS = 5;
 
-  function stopTimer() {
-    if (rafId !== null) {
-      cancelAnimationFrame(rafId);
-      rafId = null;
+    function handleVerification(e) {
+      e.preventDefault();
+      const alertBox = document.getElementById("gate-alert");
+      
+      const enteredName = document.getElementById("input-name").value.trim();
+      const enteredUsername = document.getElementById("input-username").value.trim();
+
+      const enteredKeys = [
+        document.getElementById("pass-1").value.trim(),
+        document.getElementById("pass-2").value.trim(),
+        document.getElementById("pass-3").value.trim(),
+        document.getElementById("pass-4").value.trim()
+      ].sort();
+
+      // Check name match
+      const nameMatches = (enteredName === VALID_NAME);
+      
+      // Check username is not empty
+      const usernameValid = enteredUsername.length > 0;
+
+      // Check keys match regardless of order
+      const keysMatch = (
+        enteredKeys.length === REQUIRED_KEYS.length &&
+        enteredKeys.every((key, index) => key === REQUIRED_KEYS[index])
+      );
+
+      if (nameMatches && usernameValid && keysMatch) {
+        // Unlock site
+        const gate = document.getElementById("gate-screen");
+        const site = document.getElementById("main-site");
+
+        gate.style.opacity = "0";
+        setTimeout(() => {
+          gate.style.display = "none";
+          site.style.display = "block";
+          setTimeout(() => site.style.opacity = "1", 50);
+        }, 700);
+      } else {
+        attempts++;
+        if (attempts >= MAX_ATTEMPTS) {
+          document.querySelector(".gate-container").innerHTML = `
+            <div class="lockout-msg">
+              <h3>Access Permanently Locked</h3>
+              <p style="font-size: 0.9rem; margin-top: 0.5rem; color: var(--text-muted);">
+                Too many failed attempts. Access to this space has been disabled.
+              </p>
+            </div>
+          `;
+        } else {
+          alertBox.style.display = "block";
+          alertBox.innerText = `Incorrect credentials. (${MAX_ATTEMPTS - attempts} attempts remaining)`;
+        }
+      }
     }
-  }
 
-  function spawnRipple(x, y) {
-    const r = document.createElement("span");
-    r.className = "ripple";
-    r.style.left = x + "px";
-    r.style.top  = y + "px";
-    rippleBox.appendChild(r);
-    setTimeout(() => r.remove(), 600);
-  }
+    function showTab(tabName) {
+      document.querySelectorAll("section").forEach(sec => sec.classList.remove("active"));
+      document.querySelectorAll(".nav-links a").forEach(link => link.classList.remove("active"));
 
-  function popCount() {
-    if (typeof countEl.animate !== "function") return;
-    countEl.animate(
-      [
-        { transform: "scale(1)" },
-        { transform: "scale(1.1)" },
-        { transform: "scale(1)" }
-      ],
-      { duration: 150, easing: "ease-out" }
-    );
-  }
+      const activeSec = document.getElementById("section-" + tabName);
+      const activeLink = document.getElementById("tab-" + tabName);
 
-  function updatePauseButton() {
-    pauseBtn.textContent = paused ? "Resume" : "Pause";
-    pauseBtn.disabled = !started;
-  }
-
-  function onPointerDown(e) {
-    if (e.target.closest(".controls")) return;
-    if (e.pointerType === "mouse" && e.button !== 0) return;
-    if (paused) return;
-
-    if (!started) {
-      started = true;
-      elapsed = 0;
-      hintEl.classList.add("hidden");
-      startTimer();
-      updatePauseButton();
+      if (activeSec) activeSec.classList.add("active");
+      if (activeLink) activeLink.classList.add("active");
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
-
-    count++;
-    countEl.textContent = count;
-    popCount();
-    spawnRipple(e.clientX, e.clientY);
-  }
-
-  function reset() {
-    stopTimer();
-    started = false;
-    paused  = false;
-    count   = 0;
-    elapsed = 0;
-
-    countEl.textContent = "0";
-    timerEl.textContent = "00:00.00";
-    hintEl.classList.remove("hidden");
-    rippleBox.replaceChildren();
-    updatePauseButton();
-  }
-
-  function togglePause() {
-    if (!started) return;
-
-    if (paused) {
-      paused = false;
-      startTimer();
-    } else {
-      const now = performance.now();
-      elapsed += now - startTime;
-      timerEl.textContent = formatTime(elapsed);
-      stopTimer();
-      paused = true;
-    }
-    updatePauseButton();
-  }
-
-  window.addEventListener("pointerdown", onPointerDown, { passive: true });
-  resetBtn.addEventListener("click", function (e) {
-    e.stopPropagation();
-    reset();
-  });
-  pauseBtn.addEventListener("click", function (e) {
-    e.stopPropagation();
-    togglePause();
-  });
-
-  window.addEventListener("contextmenu", function (e) {
-    if (!e.target.closest(".controls")) e.preventDefault();
-  });
-
-  document.addEventListener("visibilitychange", function () {
-    if (document.hidden && started && !paused) {
-      const now = performance.now();
-      elapsed += now - startTime;
-      timerEl.textContent = formatTime(elapsed);
-      stopTimer();
-    } else if (!document.hidden && started && !paused && rafId === null) {
-      startTimer();
-    }
-  });
-
-  updatePauseButton();
-})();
-</script>
+  </script>
 </body>
 </html>
